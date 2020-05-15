@@ -3,9 +3,11 @@ import os
 import requests
 from lxml import etree
 
-from utils.utils import get_header
 import queue
 import csv
+
+from utils.common import get_header
+
 
 class LaGou(object):
 
@@ -26,7 +28,7 @@ class LaGou(object):
         for i in range(1, 31):
             s = requests.Session()
             s.get(
-                url='https://www.lagou.com/jobs/list_运维?city=%E6%88%90%E9%83%BD&cl=false&fromSearch=true&labelWords=&suginput=',
+                url='https://www.lagou.com/jobs/list_运维?city=北京&cl=false&fromSearch=true&labelWords=&suginput=',
                 headers=get_header(), timeout=3)
             cookie = s.cookies
             req = requests.post(self.baseurl, headers=self.header, data={'first': True, 'pn': i, 'kd': self.keyword},
@@ -37,7 +39,7 @@ class LaGou(object):
             for data in datas:
                 s = requests.Session()
                 s.get(
-                    url='https://www.lagou.com/jobs/list_运维?city=%E6%88%90%E9%83%BD&cl=false&fromSearch=true&labelWords=&suginput=',
+                    url='https://www.lagou.com/jobs/list_运维?city=北京&cl=false&fromSearch=true&labelWords=&suginput=',
                     headers=get_header(), timeout=3)
                 cookie1 = s.cookies
                 url = 'https://www.lagou.com/jobs/' + str(data.get('positionId')) + '.html'
@@ -72,7 +74,7 @@ class LaGou(object):
         self.Spider()
         if os.path.exists(self.path):
             data_list = []
-            self.path = os.path.join(self.path,'save-data')
+            self.path = os.path.join(self.path, 'save-data')
             while not self.data.empty():
                 data_list.append(self.data.get())
             with open(os.path.join(self.path, '拉钩网招聘_关键词_{}_城市_{}.csv'.format(self.keyword, self.city)), 'w',
