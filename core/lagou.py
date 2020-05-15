@@ -1,10 +1,8 @@
-import os
+import random
+import time
 
 import requests
 from lxml import etree
-
-import queue
-import csv
 
 from utils.common import get_header
 from utils.db_utils import insert
@@ -12,9 +10,10 @@ from utils.db_utils import insert
 
 class LaGou(object):
 
-    def __init__(self, keyword, city, path=os.getcwd()):
+    def __init__(self, keyword, city, type):
         self.keyword = keyword
         self.city = city
+        self.type = type
         self.baseurl = 'https://www.lagou.com/jobs/positionAjax.json'
         self.header = {
             'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -65,11 +64,13 @@ class LaGou(object):
                     "positionAdvantage": str(data.get('positionAdvantage')),
                     "url": str(url),
                     "detail": str(detail),
+                    "type": str(self.type),
                 }
                 print(data_dict)
+                time.sleep(random.randint(1, 5))
                 if not insert('jobs', **data_dict):
                     continue
 
 
 if __name__ == '__main__':
-    LaGou(keyword='java', city='北京').spider()
+    LaGou(keyword='java', city='北京', type='产品线').spider()
