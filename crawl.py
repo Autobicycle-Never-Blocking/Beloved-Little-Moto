@@ -10,5 +10,5 @@ if __name__ == '__main__':
     for city in city_list:
         for type, keyword_list in position.items():
             for keyword in keyword_list:
-                LaGou(keyword='java', city=city, type=type).spider()
+                LaGou(keyword=keyword, city=city, type=type).spider()
                 time.sleep(random.randint(1, 5))
