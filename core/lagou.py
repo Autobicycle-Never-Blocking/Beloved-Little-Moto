@@ -6,6 +6,7 @@ from lxml import etree
 
 from utils.common import get_header
 from utils.db_utils import insert
+from collections import Counter
 
 
 class LaGou(object):
@@ -22,7 +23,11 @@ class LaGou(object):
         }
 
     def spider(self):
-        for i in range(1, 31):
+
+        expanded_skills = []
+
+        max_page = 10
+        for i in range(1, max_page):
             s = requests.Session()
             s.get(
                 url='https://www.lagou.com/jobs/list_运维?city=北京&cl=false&fromSearch=true&labelWords=&suginput=',
@@ -47,6 +52,9 @@ class LaGou(object):
                 if detail.isspace():
                     detail = ''.join(html.xpath('//*[@class="job-detail"]/text()')).strip()
                 print(detail)
+
+                related_skills = data.get('skillLables')
+
                 data_dict = {
                     "positionName": str(data.get('positionName')),
                     "district": str(data.get('district')),
@@ -56,7 +64,7 @@ class LaGou(object):
                     "industryField": str(data.get('industryField')),
                     "salary": str(data.get('salary')),
                     "companySize": str(data.get('companySize')),
-                    "skillLables": str(data.get('skillLables')),
+                    "skillLables": str(related_skills),
                     "createTime": str(data.get('createTime')),
                     "companyFullName": str(data.get('companyFullName')),
                     "workYear": str(data.get('workYear')),
@@ -68,9 +76,36 @@ class LaGou(object):
                 }
                 print(data_dict)
                 time.sleep(random.randint(1, 5))
-                if not insert('jobs', **data_dict):
-                    continue
+
+                expanded_skills += related_skills
+
+                print(related_skills)
+
+                # if not insert('jobs', **data_dict):
+                #     continue
+
+        return [s.lower() for s in expanded_skills]
 
 
 if __name__ == '__main__':
-    LaGou(keyword='java', city='北京', type='产品线').spider()
+
+    init_job = ['java', '人工智能', '测试', '运维', '交互设计', '数据产品经理', '原画师', '动画师', '区块链', '产品经理', '用户运营', '数据运营']
+
+    visited_jobs = set()
+
+    while init_job:
+        search_job = init_job.pop(0)
+
+        print('We need to search {}, now search {}'.format(init_job, search_job))
+
+        if search_job in visited_jobs: continue
+
+        new_expaned = LaGou(keyword=search_job, city='全国', type='产品线').spider()
+
+        expaned_counter = Counter(new_expaned).most_common(n=5)
+
+        new_jobs = [j for j, n in expaned_counter]
+
+        init_job += new_jobs
+
+        visited_jobs.add(search_job)
