@@ -56,6 +56,10 @@ class LaGou(object):
                 related_skills = data.get('skillLables')
 
                 data_dict = {
+                    "firstType": str(data.get('firstType')),
+                    "secondType": str(data.get('secondType')),
+                    "thirdType": str(data.get('thirdType')),
+                    "city": str(data.get("city")),
                     "positionName": str(data.get('positionName')),
                     "district": str(data.get('district')),
                     "stationname": str(data.get('stationname')),
@@ -73,6 +77,8 @@ class LaGou(object):
                     "url": str(url),
                     "detail": str(detail),
                     "type": str(self.type),
+                    "latitude": str(data.get("latitude")),
+                    "longitude": str(data.get("longitude")),
                 }
                 print(data_dict)
                 time.sleep(random.randint(1, 5))
@@ -89,7 +95,7 @@ class LaGou(object):
 
 if __name__ == '__main__':
 
-    init_job = ['java', '人工智能', '测试', '运维', '交互设计', '数据产品经理', '原画师', '动画师', '区块链', '产品经理', '用户运营', '数据运营']
+    init_job = ['人工智能', '测试', '运维', '交互设计', '数据产品经理', '原画师', '动画师', '区块链', '产品经理', '用户运营', '数据运营']
 
     visited_jobs = set()
 
