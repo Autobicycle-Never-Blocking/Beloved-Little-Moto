@@ -86,7 +86,7 @@ class LaGou(object):
 
                 # print(related_skills)
 
-                if not insert('jobs', **data_dict):
+                if not insert('lagou', **data_dict):
                     continue
 
         return [s.lower() for s in expanded_skills]

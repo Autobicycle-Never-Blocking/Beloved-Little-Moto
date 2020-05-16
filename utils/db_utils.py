@@ -6,10 +6,10 @@ from utils.db import local_db
 def insert(tablename, **kwargs):
     columns = ','.join([k for k in kwargs.keys()])  # 列名称
     values = ','.join(['"' + str(v) + '"' for v in kwargs.values()])
-    print(values)
+    # print(values)
     # 拼接sql字符串
     sql = 'insert into ' + tablename + ' (' + columns + ') values (' + values + ');'
-    print(sql)
+    # print(sql)
     db = local_db()
     try:
         result = db.engine.execute(text(sql))
