@@ -1,7 +1,9 @@
 from multiprocessing import Pool
 
 from config import config
+from core.boss import Boss
 from core.lagou import LaGou, lagou_worker
+from core.qcwy import QCWY
 
 if __name__ == '__main__':
     # city_list, _, _ = config()
@@ -10,4 +12,13 @@ if __name__ == '__main__':
     #     pool.apply_async(i)
     # pool.close()
     # pool.join()
-    lagou_worker('全国')
+    # lagou_worker('全国')
+    city_list, _, keyword_list = config()
+    pool = Pool(processes=2)
+    for city in city_list:
+        for keyword in keyword_list:
+            for i in [QCWY(city=city, keyword=keyword).run(),
+                      Boss(city=city, keyword=keyword).Spider()]:
+                pool.apply_async(i)
+    pool.close()
+    pool.join()

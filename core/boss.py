@@ -64,6 +64,7 @@ class Boss(object):
                     job['salary'] = s
                     job['workYear'] = w
                     job['education'] = e
+                    job['keyword'] = self.keyword
                     if not insert('boss', **job):
                         continue
                     data.append(job)

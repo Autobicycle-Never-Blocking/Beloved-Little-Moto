@@ -10,13 +10,13 @@ from utils.db_utils import insert
 
 class QCWY(object):
 
-    def __init__(self, keyword, city='北京', thread=10, path=os.getcwd()):
+    def __init__(self, keyword, city='北京', thread=10):
         self.keyword = keyword
         self.city = city
+        self.type = type
         self.thread = thread
         self.baseurl = 'https://search.51job.com/list/'
         self.header = get_header()
-        self.path = path
         self.pagequeue = queue.Queue()
         self.jobqueue = queue.Queue()
 
@@ -75,7 +75,8 @@ class QCWY(object):
                         "salary": salery[0] if len(salery) != 0 else None,
                         "createTime": time[0],
                         "detail": detail,
-                        "positionAdvantage": gongsi
+                        "positionAdvantage": gongsi,
+                        "keyword": self.keyword,
                     }
                     if not insert('qcwy', **data):
                         continue
