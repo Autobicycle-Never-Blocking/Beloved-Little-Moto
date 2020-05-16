@@ -9,7 +9,7 @@ def insert(tablename, **kwargs):
     # print(values)
     # 拼接sql字符串
     sql = 'insert into ' + tablename + ' (' + columns + ') values (' + values + ');'
-    # print(sql)
+    print(sql)
     db = local_db()
     try:
         result = db.engine.execute(text(sql))

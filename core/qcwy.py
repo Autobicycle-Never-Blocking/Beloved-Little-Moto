@@ -33,7 +33,9 @@ class QCWY(object):
         req.encoding = 'gbk'
         html = etree.HTML(req.text)
         # print(html)
-        max_page = html.xpath('//*[@id="resultList"]/div[2]/div[5]/text()')[2][3:]
+        # print(html.xpath('//*[@id="resultList"]/div[2]/div[5]/text()'))
+        max_page = html.xpath('//*[@id="resultList"]/div[2]/div[5]/text()')[2][3:] if html.xpath(
+            '//*[@id="resultList"]/div[2]/div[5]/text()') else 0
         for page in range(1, int(max_page) + 1):
             page_url = self.baseurl + '{},000000,0000,00,9,99,{},2,{}.html'.format(city_code, self.keyword, page)
             self.pagequeue.put(page_url)
@@ -53,7 +55,7 @@ class QCWY(object):
                         break
                     name = html.xpath('//*[@id="resultList"]/div[{}]/span[1]/a/text()'.format(i))
                     url = html.xpath('//*[@id="resultList"]/div[{}]/p/span/a/@href'.format(i))
-                    print(url[0])
+                    # print(url[0])
                     area = html.xpath('//*[@id="resultList"]/div[{}]/span[2]/text()'.format(i))
                     salery = html.xpath('//*[@id="resultList"]/div[{}]/span[3]/text()'.format(i))
                     time = html.xpath('//*[@id="resultList"]/div[{}]/span[4]/text()'.format(i))
@@ -78,6 +80,7 @@ class QCWY(object):
                         "positionAdvantage": gongsi,
                         "keyword": self.keyword,
                     }
+                    # print(data)
                     if not insert('qcwy', **data):
                         continue
                     self.jobqueue.put(data)
