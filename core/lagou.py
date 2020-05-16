@@ -1,9 +1,7 @@
-import random
-import time
-
 import requests
 from lxml import etree
 
+from config import config
 from utils.common import get_header
 from utils.db_utils import insert
 from collections import Counter
@@ -51,7 +49,7 @@ class LaGou(object):
                 detail = ''.join(html.xpath('//*[@class="job-detail"]//*/text()')).strip()
                 if detail.isspace():
                     detail = ''.join(html.xpath('//*[@class="job-detail"]/text()')).strip()
-                print(detail)
+                # print(detail)
 
                 related_skills = data.get('skillLables')
 
@@ -79,18 +77,46 @@ class LaGou(object):
                     "type": str(self.type),
                     "latitude": str(data.get("latitude")),
                     "longitude": str(data.get("longitude")),
+                    "keyword": str(self.keyword),
                 }
-                print(data_dict)
-                time.sleep(random.randint(1, 5))
+                # print(data_dict)
+                # time.sleep(random.randint(1, 5))
 
                 expanded_skills += related_skills
 
-                print(related_skills)
+                # print(related_skills)
 
-                # if not insert('jobs', **data_dict):
-                #     continue
+                if not insert('jobs', **data_dict):
+                    continue
 
         return [s.lower() for s in expanded_skills]
+
+
+def lagou_worker(city):
+    _, position, init_job = config()
+    visited_jobs = set()
+    while init_job:
+        search_job = init_job.pop(0)
+
+        print('We need to search {}, now search {}'.format(init_job, search_job))
+
+        if search_job in visited_jobs:
+            continue
+        type = ''
+        for k, v in position.items():
+            if search_job in v:
+                type = k
+
+        new_expaned = LaGou(keyword=search_job, city=city,
+                            type=type).spider()
+
+        expaned_counter = Counter(new_expaned).most_common(n=5)
+
+        new_jobs = [j for j, n in expaned_counter]
+
+        init_job += new_jobs
+
+        visited_jobs.add(search_job)
 
 
 if __name__ == '__main__':
