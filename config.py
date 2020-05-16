@@ -9,5 +9,10 @@ def config():
         '运营线': ['内容运营', '电商运营', '用户运营', '数据运营', '用户增长'],
         '算法线': ['AI', 'NLP', 'CV', 'BI', '算法工程师', '自然语言处理', '计算机视觉', '算法'],
     }
-    return city_list, position
+    s_type = []
+    for i in position.values():
+        s_type.extend(i)
+
+    return city_list, position, s_type
+
 
