@@ -17,7 +17,6 @@ class Boss(object):
         self.city = city
         self.path = path
         self.base_url = 'https://www.zhipin.com/mobile/jobs.json'  # 手机端接口没有验证
-        self.csv_header = ['职位名称', '职位链接', '公司名称', '工作地点', '薪资', '工作经验', '学历要求', ]
 
     def _get_city_code(self):
         url = 'https://www.zhipin.com/wapi/zpCommon/data/city.json'

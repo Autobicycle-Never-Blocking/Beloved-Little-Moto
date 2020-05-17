@@ -11,7 +11,7 @@ from collections import Counter
 
 class LaGou(object):
 
-    def __init__(self, thread=5):
+    def __init__(self, thread=12):
         # self.keyword = keyword
         self.thread = thread
         # self.city = city
@@ -89,16 +89,17 @@ class LaGou(object):
 
                 # print(related_skills)
 
-                if not insert('lagou', **data_dict):
+                if not insert('lagou_copy1_copy1', **data_dict):
                     continue
 
         return [s.lower() for s in expanded_skills]
 
     def run(self):
         _, position, init_job = config()
+        visited_jobs = set()
         thread_list = []
         for i in range(self.thread):
-            t = threading.Thread(target=self.lagou_worker, args=(init_job, position))
+            t = threading.Thread(target=self.lagou_worker, args=(init_job, position, visited_jobs))
             thread_list.append(t)
         for t in thread_list:
             t.setDaemon(True)
@@ -106,9 +107,8 @@ class LaGou(object):
         for t in thread_list:
             t.join()
 
-    def lagou_worker(self, init_job, position):
+    def lagou_worker(self, init_job, position, visited_jobs):
 
-        visited_jobs = set()
         while init_job:
             search_job = init_job.pop(0)
 
@@ -121,7 +121,7 @@ class LaGou(object):
                 if search_job in v:
                     type = k
 
-            new_expaned = self.spider(search_job, '全国', type)
+            new_expaned = self.spider(search_job, '上海', type)
 
             expaned_counter = Counter(new_expaned).most_common(n=5)
 
@@ -130,10 +130,6 @@ class LaGou(object):
             init_job += new_jobs
 
             visited_jobs.add(search_job)
-
-
-def lagou_main(city):
-    LaGou().lagou_worker()
 
 
 if __name__ == '__main__':

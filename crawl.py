@@ -2,7 +2,7 @@ from multiprocessing import Pool
 
 from config import config
 from core.boss import Boss
-from core.lagou import LaGou, lagou_main
+from core.lagou import LaGou
 from core.qcwy import QCWY
 
 if __name__ == '__main__':
