@@ -11,10 +11,12 @@ def index():
 
 @app.route("/predict_salary")
 def predict_salary():
-
     return "hello flask"
 
 
+@app.route("/search_ratio")
+def search_ratio():
+    pass
 
 
 if __name__ == '__main__':

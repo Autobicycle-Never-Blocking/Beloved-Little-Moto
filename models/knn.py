@@ -44,7 +44,7 @@ def get_train_Y(target):
 
 
 def knn_model(X, Y):
-    neigh = KNeighborsRegressor(n_neighbors=2)
+    neigh = KNeighborsRegressor(n_neighbors=4)
     neigh.fit(X, Y)
     return neigh
 
@@ -76,10 +76,10 @@ def main():
     Y = get_train_Y(target)
     neigh = knn_model(X, Y)
 
-    return neigh, vectorizer
+    return neigh, vectorizer, lagou_df
 
 
 if __name__ == '__main__':
-    neigh, vectorizer = main()
+    neigh, vectorizer, lagou_df = main()
     test = '算法 北京 4年 本科'
     predicate_by_label(test, neigh, vectorizer)
