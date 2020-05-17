@@ -121,7 +121,7 @@ class LaGou(object):
                 if search_job in v:
                     type = k
 
-            new_expaned = self.spider(search_job, '上海', type)
+            new_expaned = self.spider(search_job, '无锡', type)
 
             expaned_counter = Counter(new_expaned).most_common(n=5)
 
@@ -134,23 +134,4 @@ class LaGou(object):
 
 if __name__ == '__main__':
 
-    init_job = ['人工智能', '测试', '运维', '交互设计', '数据产品经理', '原画师', '动画师', '区块链', '产品经理', '用户运营', '数据运营']
-
-    visited_jobs = set()
-
-    while init_job:
-        search_job = init_job.pop(0)
-
-        print('We need to search {}, now search {}'.format(init_job, search_job))
-
-        if search_job in visited_jobs: continue
-
-        new_expaned = LaGou(keyword=search_job, city='全国', type='产品线').spider()
-
-        expaned_counter = Counter(new_expaned).most_common(n=5)
-
-        new_jobs = [j for j, n in expaned_counter]
-
-        init_job += new_jobs
-
-        visited_jobs.add(search_job)
+    LaGou().run()
