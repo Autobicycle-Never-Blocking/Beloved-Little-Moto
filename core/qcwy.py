@@ -2,7 +2,6 @@ import requests
 import queue
 from lxml import etree
 import threading
-import os
 
 from utils.common import get_header
 from utils.db_utils import insert
@@ -10,7 +9,7 @@ from utils.db_utils import insert
 
 class QCWY(object):
 
-    def __init__(self, keyword, city='北京', thread=10):
+    def __init__(self, keyword, city='北京', thread=5):
         self.keyword = keyword
         self.city = city
         self.type = type

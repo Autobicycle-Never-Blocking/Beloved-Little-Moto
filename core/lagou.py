@@ -1,3 +1,5 @@
+import threading
+
 import requests
 from lxml import etree
 
@@ -9,10 +11,11 @@ from collections import Counter
 
 class LaGou(object):
 
-    def __init__(self, keyword, city, type):
-        self.keyword = keyword
-        self.city = city
-        self.type = type
+    def __init__(self, thread=5):
+        # self.keyword = keyword
+        self.thread = thread
+        # self.city = city
+        # self.type = type
         self.baseurl = 'https://www.lagou.com/jobs/positionAjax.json'
         self.header = {
             'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -20,7 +23,7 @@ class LaGou(object):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
         }
 
-    def spider(self):
+    def spider(self, keyword, city, type):
 
         expanded_skills = []
 
@@ -31,8 +34,8 @@ class LaGou(object):
                 url='https://www.lagou.com/jobs/list_运维?city=北京&cl=false&fromSearch=true&labelWords=&suginput=',
                 headers=get_header(), timeout=3)
             cookie = s.cookies
-            res = requests.post(self.baseurl, headers=self.header, data={'first': True, 'pn': i, 'kd': self.keyword},
-                                params={'px': 'default', 'city': self.city, 'needAddtionalResult': 'false'},
+            res = requests.post(self.baseurl, headers=self.header, data={'first': True, 'pn': i, 'kd': keyword},
+                                params={'px': 'default', 'city': city, 'needAddtionalResult': 'false'},
                                 cookies=cookie, timeout=3)
             text = res.json()
             all_data = text['content']['positionResult']['result']
@@ -74,10 +77,10 @@ class LaGou(object):
                     "positionAdvantage": str(data.get('positionAdvantage')),
                     "url": str(url),
                     "detail": str(detail),
-                    "type": str(self.type),
+                    "type": str(type),
                     "latitude": str(data.get("latitude")),
                     "longitude": str(data.get("longitude")),
-                    "keyword": str(self.keyword),
+                    "keyword": str(keyword),
                 }
                 # print(data_dict)
                 # time.sleep(random.randint(1, 5))
@@ -91,32 +94,46 @@ class LaGou(object):
 
         return [s.lower() for s in expanded_skills]
 
+    def run(self):
+        _, position, init_job = config()
+        thread_list = []
+        for i in range(self.thread):
+            t = threading.Thread(target=self.lagou_worker, args=(init_job, position))
+            thread_list.append(t)
+        for t in thread_list:
+            t.setDaemon(True)
+            t.start()
+        for t in thread_list:
+            t.join()
 
-def lagou_worker(city):
-    _, position, init_job = config()
-    visited_jobs = set()
-    while init_job:
-        search_job = init_job.pop(0)
+    def lagou_worker(self, init_job, position):
 
-        print('We need to search {}, now search {}'.format(init_job, search_job))
+        visited_jobs = set()
+        while init_job:
+            search_job = init_job.pop(0)
 
-        if search_job in visited_jobs:
-            continue
-        type = ''
-        for k, v in position.items():
-            if search_job in v:
-                type = k
+            print('We need to search {}, now search {}'.format(init_job, search_job))
 
-        new_expaned = LaGou(keyword=search_job, city=city,
-                            type=type).spider()
+            if search_job in visited_jobs:
+                continue
+            type = ''
+            for k, v in position.items():
+                if search_job in v:
+                    type = k
 
-        expaned_counter = Counter(new_expaned).most_common(n=5)
+            new_expaned = self.spider(search_job, '全国', type)
 
-        new_jobs = [j for j, n in expaned_counter]
+            expaned_counter = Counter(new_expaned).most_common(n=5)
 
-        init_job += new_jobs
+            new_jobs = [j for j, n in expaned_counter]
 
-        visited_jobs.add(search_job)
+            init_job += new_jobs
+
+            visited_jobs.add(search_job)
+
+
+def lagou_main(city):
+    LaGou().lagou_worker()
 
 
 if __name__ == '__main__':
