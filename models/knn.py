@@ -82,4 +82,4 @@ def main():
 if __name__ == '__main__':
     neigh, vectorizer, lagou_df = main()
     test = '算法 北京 4年 本科'
-    predicate_by_label(test, neigh, vectorizer)
+    print(predicate_by_label(test, neigh, vectorizer))
