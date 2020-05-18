@@ -15,18 +15,47 @@ def index():
     return "hello flask"
 
 
+@app.route("/get_data", methods=['POST'])
+def get_data():
+    data = request.json
+    city1 = data.get('city1')
+    city2 = data.get('city2')
+    city3 = data.get('city3')
+    city4 = data.get('city4')
+
+    data_dict = {
+        "上海":    19.678295,
+        "东莞":    12.750000,
+        "北京":    24.003906,
+        "南京":    15.125000,
+        "天津":    13.800000,
+        "宁波":     9.250000,
+        "广州":    18.018519,
+        "成都":    13.584906,
+        "无锡":     8.000000,
+        "昆明":     6.000000,
+        "杭州":    17.668919,
+        "武汉":    13.051724,
+        "深圳":    19.259259,
+        "苏州":    15.343750,
+        "西安":    13.308824,
+        "郑州":     8.500000,
+        "重庆":    11.500000,
+        "长沙":    10.750000,
+        "青岛":    13.187500,
+    }
+
+    data = {
+        'data': [data_dict.get(city1),data_dict.get(city2),data_dict.get(city3),data_dict.get(city4)]
+    }
+
+    return jsonify(data)
+
+
 @app.route("/predict_salary", methods=['POST'])
 def predict_salary():
     data = request.json
-    # "work": '',
-    # "part": "",
-    # "year": "",
-    # "education": "",
-    # print(data)
-    # work = '算法'
-    # part = '北京'
-    # year = '5年'
-    # education = '本科'
+    print(data)
     work = data.get('work')
     part = data.get('part')
     year = data.get('year')

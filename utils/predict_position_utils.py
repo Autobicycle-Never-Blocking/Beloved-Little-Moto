@@ -11,8 +11,8 @@ def get_position_list(df, num):
         color_index = random.randint(0, 19)
         positionList.append(
             {
-                "name": company_list[random.randint(5, 10000)],
-                "value": random.randint(1000,1500),
+                "name": company_list[random.randint(5, 100)],
+                "value": random.randint(1000, 1500),
                 "symbolSize": random.randint(40,80),
                 "draggable": 'true',
                 "itemStyle": {
