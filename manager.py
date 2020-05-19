@@ -1,12 +1,14 @@
 import random
 
 from flask import Flask, request, g, jsonify
+from flask_cors import CORS
 
 from models.knn import main, predicate_by_label
 from utils.g_var import df_login_data
 from utils.predict_position_utils import get_position_list
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 neigh, vectorizer, lagou_df = main()
 
 
