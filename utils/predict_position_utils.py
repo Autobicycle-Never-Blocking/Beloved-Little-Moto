@@ -5,13 +5,14 @@ from config import color_list
 
 def get_position_list(df, num):
     colorList = color_list()
-    company_list = df['companyFullName']
+    company_list = list(set(df['companyFullName']))
     positionList = []
     for i in range(num):
         color_index = random.randint(0, 19)
+        company_index = random.randint(0, len(company_list)-1)
         positionList.append(
             {
-                "name": company_list[random.randint(5, 100)],
+                "name": company_list[company_index],
                 "value": random.randint(1000, 1500),
                 "symbolSize": random.randint(40,80),
                 "draggable": 'true',
@@ -24,5 +25,6 @@ def get_position_list(df, num):
                 }
             }
         )
+        company_list.remove(company_list[company_index])
 
     return positionList
