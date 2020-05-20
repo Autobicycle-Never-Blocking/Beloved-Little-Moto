@@ -17,6 +17,32 @@ def index():
     return "hello flask"
 
 
+@app.route("/top5")
+def top5():
+    firstTypeDF = lagou_df['firstType'].value_counts()
+    list_top = []
+    for k, v in firstTypeDF[:5].items():
+        info = {
+            k: v
+        }
+        list_top.append(info)
+    data = {'top5_list': list_top}
+    return jsonify(data)
+
+
+@app.route("/p_top5")
+def p_top5():
+    firstTypeDF = lagou_df['secondType'].value_counts()
+    list_top = []
+    for k, v in firstTypeDF[:5].items():
+        info = {
+            k: v
+        }
+        list_top.append(info)
+    data = {'top5_list': list_top}
+    return jsonify(data)
+
+
 @app.route("/get_data", methods=['POST'])
 def get_data():
     data = request.json
