@@ -20,26 +20,30 @@ def index():
 @app.route("/top5")
 def top5():
     firstTypeDF = lagou_df['firstType'].value_counts()
-    list_top = []
+    top5_p_list = []
+    top5_nums_list = []
     for k, v in firstTypeDF[:5].items():
-        info = {
-            k: v
-        }
-        list_top.append(info)
-    data = {'top5_list': list_top}
+        top5_p_list.append(k)
+        top5_nums_list.append(v)
+    data = {
+        'top5_p_list': top5_p_list,
+        'top5_nums_list': top5_nums_list,
+    }
     return jsonify(data)
 
 
 @app.route("/p_top5")
 def p_top5():
     firstTypeDF = lagou_df['secondType'].value_counts()
-    list_top = []
+    top5_p_list = []
+    top5_nums_list = []
     for k, v in firstTypeDF[:5].items():
-        info = {
-            k: v
-        }
-        list_top.append(info)
-    data = {'top5_list': list_top}
+        top5_p_list.append(k)
+        top5_nums_list.append(v)
+    data = {
+        'top5_p_list': top5_p_list,
+        'top5_nums_list': top5_nums_list,
+    }
     return jsonify(data)
 
 
@@ -52,29 +56,29 @@ def get_data():
     city4 = data.get('city4')
 
     data_dict = {
-        "上海":    19.678295,
-        "东莞":    12.750000,
-        "北京":    24.003906,
-        "南京":    15.125000,
-        "天津":    13.800000,
-        "宁波":     9.250000,
-        "广州":    18.018519,
-        "成都":    13.584906,
-        "无锡":     8.000000,
-        "昆明":     6.000000,
-        "杭州":    17.668919,
-        "武汉":    13.051724,
-        "深圳":    19.259259,
-        "苏州":    15.343750,
-        "西安":    13.308824,
-        "郑州":     8.500000,
-        "重庆":    11.500000,
-        "长沙":    10.750000,
-        "青岛":    13.187500,
+        "上海": 19.678295,
+        "东莞": 12.750000,
+        "北京": 24.003906,
+        "南京": 15.125000,
+        "天津": 13.800000,
+        "宁波": 9.250000,
+        "广州": 18.018519,
+        "成都": 13.584906,
+        "无锡": 8.000000,
+        "昆明": 6.000000,
+        "杭州": 17.668919,
+        "武汉": 13.051724,
+        "深圳": 19.259259,
+        "苏州": 15.343750,
+        "西安": 13.308824,
+        "郑州": 8.500000,
+        "重庆": 11.500000,
+        "长沙": 10.750000,
+        "青岛": 13.187500,
     }
 
     data = {
-        'data': [data_dict.get(city1),data_dict.get(city2),data_dict.get(city3),data_dict.get(city4)]
+        'data': [data_dict.get(city1), data_dict.get(city2), data_dict.get(city3), data_dict.get(city4)]
     }
 
     return jsonify(data)
