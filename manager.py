@@ -55,6 +55,31 @@ def get_data():
     city3 = data.get('city3')
     city4 = data.get('city4')
 
+    company_size = data.get('company_size')
+    degree = data.get('degree')
+    work_year = data.get('work_year')
+    position = data.get('position')
+
+    if all([company_size, degree, work_year, position, city1, city2, city3, city4]):
+        res1 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+                                    lagou_df['city'] == city1)].mean()['avg_salary']
+        res2 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+                                    lagou_df['city'] == city2)].mean()['avg_salary']
+        res3 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+                                    lagou_df['city'] == city3)].mean()['avg_salary']
+        res4 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+                                    lagou_df['city'] == city4)].mean()['avg_salary']
+        data = {
+            'city_salary': [res1, res2, res3, res4],
+            'city': [city1, city2, city3, city4],
+        }
+
+        return jsonify(data)
+
     data_dict = {
         "上海": 19.678295,
         "东莞": 12.750000,
@@ -78,7 +103,8 @@ def get_data():
     }
 
     data = {
-        'data': [data_dict.get(city1), data_dict.get(city2), data_dict.get(city3), data_dict.get(city4)]
+        'city_salary': [data_dict.get(city1), data_dict.get(city2), data_dict.get(city3), data_dict.get(city4)],
+        'city': [city1, city2, city3, city4],
     }
 
     return jsonify(data)
