@@ -107,8 +107,9 @@ def get_data():
         # res4 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
         #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
         #                             lagou_df['city'] == city4)].mean()['avg_salary']
+    # print(res_df)
 
-    if city and res_df:
+    if city and res_df is not None:
         city_salary = [res_df.loc[res_df['city'] == i].mean()['avg_salary'] for i in city]
 
         data = {
@@ -117,7 +118,7 @@ def get_data():
         }
         return jsonify(data)
 
-    elif city and not res_df:
+    elif city and res_df is None:
         city_salary = [lagou_df.loc[lagou_df['city'] == i].mean()['avg_salary'] for i in city]
 
         data = {
