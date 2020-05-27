@@ -110,7 +110,7 @@ def get_data():
     # print(res_df)
 
     if city and res_df is not None:
-        city_salary = [res_df.loc[res_df['city'] == i].mean()['avg_salary'] for i in city]
+        city_salary = [round(res_df.loc[res_df['city'] == i].mean()['avg_salary'], 2) for i in city]
 
         data = {
             'city_salary': city_salary,
@@ -119,7 +119,7 @@ def get_data():
         return jsonify(data)
 
     elif city and res_df is None:
-        city_salary = [lagou_df.loc[lagou_df['city'] == i].mean()['avg_salary'] for i in city]
+        city_salary = [round(lagou_df.loc[lagou_df['city'] == i].mean()['avg_salary'], 2) for i in city]
 
         data = {
             'city_salary': city_salary,
