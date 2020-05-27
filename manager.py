@@ -50,64 +50,112 @@ def p_top5():
 @app.route("/get_data", methods=['POST'])
 def get_data():
     data = request.json
-    city1 = data.get('city1')
-    city2 = data.get('city2')
-    city3 = data.get('city3')
-    city4 = data.get('city4')
+    city = data.get('city')
 
     company_size = data.get('company_size')
     degree = data.get('degree')
     work_year = data.get('work_year')
     position = data.get('position')
 
-    if all([company_size, degree, work_year, position, city1, city2, city3, city4]):
-        res1 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-                                    lagou_df['city'] == city1)].mean()['avg_salary']
-        res2 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-                                    lagou_df['city'] == city2)].mean()['avg_salary']
-        res3 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-                                    lagou_df['city'] == city3)].mean()['avg_salary']
-        res4 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-                                    lagou_df['city'] == city4)].mean()['avg_salary']
-        data = {
-            'city_salary': [res1, res2, res3, res4],
-            'city': [city1, city2, city3, city4],
-        }
+    if all([company_size, degree, work_year, position]):
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == company_size) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year)]
+    elif company_size and degree and work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['companySize'] == company_size) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year)]
+    elif company_size and degree and not work_year and position:
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == company_size) & (
+                lagou_df['education'] == degree)]
+    elif company_size and not degree and work_year and position:
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == company_size) & (
+                lagou_df['workYear'] == work_year)]
+    elif not company_size and degree and work_year and position:
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position) & (
+                lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year)]
+    elif company_size and degree and not work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['companySize'] == company_size) & (
+                lagou_df['education'] == degree)]
+    elif company_size and not degree and work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['companySize'] == company_size) & (lagou_df['workYear'] == work_year)]
+    elif not company_size and degree and work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year)]
+    elif company_size and not degree and not work_year and position:
+        res_df = lagou_df.loc[(lagou_df['companySize'] == company_size) & (lagou_df['thirdType'] == position)]
+    elif not company_size and degree and not work_year and position:
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['education'] == degree)]
+    elif not company_size and not degree and work_year and position:
+        res_df = lagou_df.loc[(lagou_df['workYear'] == work_year) & (lagou_df['thirdType'] == position)]
+    elif company_size and not degree and not work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['companySize'] == company_size)]
+    elif not company_size and degree and not work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['education'] == degree)]
+    elif not company_size and not degree and work_year and not position:
+        res_df = lagou_df.loc[(lagou_df['workYear'] == work_year)]
+    elif not company_size and not degree and not work_year and position:
+        res_df = lagou_df.loc[(lagou_df['thirdType'] == position)]
+    else:
+        res_df = None
+        # res1 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+        #                             lagou_df['city'] == city1)].mean()['avg_salary']
+        # res2 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+        #                             lagou_df['city'] == city2)].mean()['avg_salary']
+        # res3 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+        #                             lagou_df['city'] == city3)].mean()['avg_salary']
+        # res4 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
+        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
+        #                             lagou_df['city'] == city4)].mean()['avg_salary']
 
+    if city and res_df:
+        city_salary = [res_df.loc[res_df['city'] == i].mean()['avg_salary'] for i in city]
+
+        data = {
+            'city_salary': city_salary,
+            'city': city,
+        }
         return jsonify(data)
 
-    data_dict = {
-        "上海": 19.678295,
-        "东莞": 12.750000,
-        "北京": 24.003906,
-        "南京": 15.125000,
-        "天津": 13.800000,
-        "宁波": 9.250000,
-        "广州": 18.018519,
-        "成都": 13.584906,
-        "无锡": 8.000000,
-        "昆明": 6.000000,
-        "杭州": 17.668919,
-        "武汉": 13.051724,
-        "深圳": 19.259259,
-        "苏州": 15.343750,
-        "西安": 13.308824,
-        "郑州": 8.500000,
-        "重庆": 11.500000,
-        "长沙": 10.750000,
-        "青岛": 13.187500,
-    }
+    elif city and not res_df:
+        city_salary = [lagou_df.loc[lagou_df['city'] == i].mean()['avg_salary'] for i in city]
 
-    data = {
-        'city_salary': [data_dict.get(city1), data_dict.get(city2), data_dict.get(city3), data_dict.get(city4)],
-        'city': [city1, city2, city3, city4],
-    }
+        data = {
+            'city_salary': city_salary,
+            'city': city,
+        }
+        return jsonify(data)
 
-    return jsonify(data)
+    else:
+        return jsonify({'code': 404, 'msg': '未输入任何搜索条件，无法返回'})
+    # data_dict = {
+    #     "上海": 19.678295,
+    #     "东莞": 12.750000,
+    #     "北京": 24.003906,
+    #     "南京": 15.125000,
+    #     "天津": 13.800000,
+    #     "宁波": 9.250000,
+    #     "广州": 18.018519,
+    #     "成都": 13.584906,
+    #     "无锡": 8.000000,
+    #     "昆明": 6.000000,
+    #     "杭州": 17.668919,
+    #     "武汉": 13.051724,
+    #     "深圳": 19.259259,
+    #     "苏州": 15.343750,
+    #     "西安": 13.308824,
+    #     "郑州": 8.500000,
+    #     "重庆": 11.500000,
+    #     "长沙": 10.750000,
+    #     "青岛": 13.187500,
+    # }
+    #
+    # data = {
+    #     'city_salary': [data_dict.get(city1), data_dict.get(city2), data_dict.get(city3), data_dict.get(city4)],
+    #     'city': [city1, city2, city3, city4],
+    # }
+    #
+    # return jsonify(data)
 
 
 @app.route("/predict_salary", methods=['POST'])
