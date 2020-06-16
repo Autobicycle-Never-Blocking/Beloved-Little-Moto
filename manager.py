@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask, request, g, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from models.knn import main, predicate_by_label
@@ -51,7 +51,7 @@ def p_top5():
 def get_data():
     data = request.json
     city = data.get('city')
-
+    print(type(city))
     company_size = data.get('company_size')
     degree = data.get('degree')
     work_year = data.get('work_year')
@@ -95,19 +95,6 @@ def get_data():
         res_df = lagou_df.loc[(lagou_df['thirdType'] == position)]
     else:
         res_df = None
-        # res1 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-        #                             lagou_df['city'] == city1)].mean()['avg_salary']
-        # res2 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-        #                             lagou_df['city'] == city2)].mean()['avg_salary']
-        # res3 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-        #                             lagou_df['city'] == city3)].mean()['avg_salary']
-        # res4 = lagou_df.loc[(lagou_df['thirdType'] == position) & (lagou_df['companySize'] == work_year) & (
-        #         lagou_df['education'] == degree) & (lagou_df['workYear'] == work_year) & (
-        #                             lagou_df['city'] == city4)].mean()['avg_salary']
-    # print(res_df)
 
     if city and res_df is not None:
         city_salary = [round(res_df.loc[res_df['city'] == i].mean()['avg_salary'], 2) for i in city]
@@ -116,6 +103,7 @@ def get_data():
             'city_salary': city_salary,
             'city': city,
         }
+        print(data)
         return jsonify(data)
 
     elif city and res_df is None:
@@ -125,6 +113,7 @@ def get_data():
             'city_salary': city_salary,
             'city': city,
         }
+        print(data)
         return jsonify(data)
 
     else:
@@ -162,7 +151,7 @@ def get_data():
 @app.route("/predict_salary", methods=['POST'])
 def predict_salary():
     data = request.json
-    print(data)
+    # print(data)
     work = data.get('work')
     part = data.get('part')
     year = data.get('year')
@@ -183,4 +172,5 @@ def search_ratio():
 
 
 if __name__ == '__main__':
+    app.config['JSON_AS_ASCII'] = False
     app.run(host="0.0.0.0", port=15015, debug=True)
