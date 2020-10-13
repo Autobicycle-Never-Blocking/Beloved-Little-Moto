@@ -3,6 +3,7 @@ from collections import Counter
 
 from lxml import etree
 
+from core.ccc import get_video_src
 from utils.common import get_header
 
 
@@ -42,26 +43,24 @@ class ShiPin(object):
             response.encoding = 'utf-8'
             de_html = etree.HTML(response.text)
             # print(res.text)
-            title = de_html.xpath('//*[@id="title-overview-widget"]//h1/text()')[0]
-            img_src = de_html.xpath('//*[@class="slate"]//img/@src')[0]
-            video_url = url_str + de_html.xpath('//*[@class="slate"]/a/@href')[0]
+            title = de_html.xpath('//*[@id="title-overview-widget"]//h1/text()')[0] if de_html.xpath(
+                '//*[@id="title-overview-widget"]//h1/text()') else ''
+            img_src = de_html.xpath('//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src')[0] if de_html.xpath(
+                '//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src') else ''
+
+            video_url = url_str + de_html.xpath('//*[@class="slate"]/a/@href')[0] if de_html.xpath(
+                '//*[@class="slate"]/a/@href') else ''
             # print(img_src)
             # print(title)
+            if not video_url:
+                continue
             print(video_url)
-            s2 = requests.Session()
-            s2.get(url=video_url, headers=get_header(), timeout=5)
-            cookie2 = s2.cookies
-            res_video = requests.get(video_url, headers=self.header, cookies=cookie2, timeout=5)
-            res_video.encoding = 'utf-8'
-            video_html = etree.HTML(res_video.text)
-            print(res_video.text)
-            video_src = video_html.xpath('//*[@id="imdb-jw-video-1"]//@src')
-            print(video_src)
-            video_detail = video_html.xpath('//*[@class="ipc-page-grid__item ipc-page-grid__item--span-1"]//h3/text()')
-            print(video_src)
+            video_src, video_title, video_detail = get_video_src(video_url)
+            # s2 = requests.Se
             video_dict = {
                 'title': title,
                 'img_src': img_src,
+                'video_title': video_title,
                 'video_src': video_src,
                 'video_detail': video_detail,
             }

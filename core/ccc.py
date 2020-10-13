@@ -13,8 +13,12 @@ def get_video_src(url):
     element = driver.find_elements_by_xpath('//*[@class="video-player__video"]//video')
     element1 = driver.find_elements_by_xpath('//*[@class="ipc-page-grid__item ipc-page-grid__item--span-1"]//h3')
     src = element[0].get_attribute("src")
-    title = element1[0].text
-    detail = element1[1].text
+    if len(element1) >= 2:
+        title = element1[0].text
+        detail = element1[1].text
+    else:
+        title = element1[0].text
+        detail = ''
     driver.quit()
     return src, title, detail
 
