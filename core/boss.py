@@ -70,7 +70,7 @@ class Boss(object):
                 page += 1
             else:
                 break
-            # print(data)
+            print(data)
         return data
 
 
