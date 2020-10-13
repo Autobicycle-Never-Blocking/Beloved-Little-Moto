@@ -33,38 +33,45 @@ class ShiPin(object):
 
         detail_url_list = html.xpath('//*[@id="main"]/div/span/div/div/div[3]/table/tbody/tr/td[1]/a/@href')
         # img_src_list = html.xpath('//*[@id="main"]/div/span/div/div/div[3]/table/tbody/tr/td/a/img/@src')
-        for j in [url_str + i for i in detail_url_list]:
-            print(j)
-            s1 = requests.Session()
-            s1.get(url=j, headers=get_header(), timeout=5)
-            cookie1 = s1.cookies
-            # self.header['referer'] = 'https://www.imdb.com/chart/top/?ref_=nv_mv_250'
-            response = requests.get(j, headers=self.header, cookies=cookie1, timeout=5)
-            response.encoding = 'utf-8'
-            de_html = etree.HTML(response.text)
-            # print(res.text)
-            title = de_html.xpath('//*[@id="title-overview-widget"]//h1/text()')[0] if de_html.xpath(
-                '//*[@id="title-overview-widget"]//h1/text()') else ''
-            img_src = de_html.xpath('//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src')[0] if de_html.xpath(
-                '//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src') else ''
+        index = 0
+        for j in (url_str + i for i in detail_url_list):
+            try:
+                print(j)
+                s1 = requests.Session()
+                s1.get(url=j, headers=get_header(), timeout=5)
+                cookie1 = s1.cookies
+                # self.header['referer'] = 'https://www.imdb.com/chart/top/?ref_=nv_mv_250'
+                response = requests.get(j, headers=self.header, cookies=cookie1, timeout=5)
+                response.encoding = 'utf-8'
+                de_html = etree.HTML(response.text)
+                # print(res.text)
+                title = de_html.xpath('//*[@id="title-overview-widget"]//h1/text()')[0] if de_html.xpath(
+                    '//*[@id="title-overview-widget"]//h1/text()') else ''
+                img_src = de_html.xpath('//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src')[0] if de_html.xpath(
+                    '//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src') else ''
 
-            video_url = url_str + de_html.xpath('//*[@class="slate"]/a/@href')[0] if de_html.xpath(
-                '//*[@class="slate"]/a/@href') else ''
-            # print(img_src)
-            # print(title)
-            if not video_url:
+                video_url = url_str + de_html.xpath('//*[@class="slate"]/a/@href')[0] if de_html.xpath(
+                    '//*[@class="slate"]/a/@href') else ''
+                # print(img_src)
+                # print(title)
+                if not video_url:
+                    continue
+                print(video_url)
+                video_src, video_title, video_detail = get_video_src(video_url)
+                video_dict = {
+                    'title': title,
+                    'img_src': img_src,
+                    'video_title': video_title,
+                    'video_src': video_src,
+                    'video_detail': video_detail,
+                }
+                index += 1
+                data.append(video_dict)
+                print(index)
+            except Exception as e:
+                print(e)
+            else:
                 continue
-            print(video_url)
-            video_src, video_title, video_detail = get_video_src(video_url)
-            # s2 = requests.Se
-            video_dict = {
-                'title': title,
-                'img_src': img_src,
-                'video_title': video_title,
-                'video_src': video_src,
-                'video_detail': video_detail,
-            }
-            data.append(video_dict)
         print(data)
         with open('video.txt', 'w') as f:
             f.write(str(data))
