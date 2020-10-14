@@ -47,8 +47,8 @@ class ShiPin(object):
                 # print(res.text)
                 title = de_html.xpath('//*[@id="title-overview-widget"]//h1/text()')[0] if de_html.xpath(
                     '//*[@id="title-overview-widget"]//h1/text()') else ''
-                img_src = de_html.xpath('//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src')[0] if de_html.xpath(
-                    '//*[@id="title-overview-widget"]/div[2]/div[1]/a/img/@src') else ''
+                img_src = de_html.xpath('//*[@class="poster"]//img/@src')[0] if de_html.xpath(
+                    '//*[@class="poster"]//img/@src') else ''
 
                 video_url = url_str + de_html.xpath('//*[@class="slate"]/a/@href')[0] if de_html.xpath(
                     '//*[@class="slate"]/a/@href') else ''
@@ -73,7 +73,7 @@ class ShiPin(object):
             else:
                 continue
         print(data)
-        with open('video.txt', 'w') as f:
+        with open('video.json', 'w') as f:
             f.write(str(data))
 
     def run(self):
